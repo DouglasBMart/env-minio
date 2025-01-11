@@ -1,0 +1,30 @@
+services:
+  ####################################################
+  # MINIO NÓ 1 (Inicialmente único, pronto para cluster)
+  ####################################################
+  minio1:
+    image: minio/minio:latest
+    container_name: minio1
+    hostname: minio1
+    volumes:
+      - ./minio1/data:/data      # Persistência dos dados
+      - ./minio1/config:/root/.minio # Persistência das configurações
+    environment:
+      MINIO_ROOT_USER: "${MINIO_USER}"         # Usuário definido no ambiente
+      MINIO_ROOT_PASSWORD: "${MINIO_PASSWORD}" # Senha definida no ambiente
+    ports:
+      - "9000:9000"   # Porta API S3
+      - "9090:9090"   # Porta Console
+    networks:
+      - minio_net
+    command: >
+      server
+      --address :9000
+      --console-address :9090
+      /data
+
+networks:
+  minio_net:
+
+volumes:
+  minio1_data:
